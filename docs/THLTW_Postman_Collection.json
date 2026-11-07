@@ -1,0 +1,965 @@
+{
+  "info": {
+    "_postman_id": "4ef1816f-fb7d-4102-bb80-d3bb17f55f81",
+    "name": "THLTW - Thuê Trang Phục API Collection",
+    "description": "Postman Collection đầy đủ để test toàn bộ các API hiện tại của dự án Website Cho Thuê Trang Phục (thltweb_huy_tuyet).\n\nBao gồm:\n- 01. Authentication & Profile (Login, Get Profile)\n- 02. Products (Public: Danh sách, Chi tiết theo slug)\n- 03. Categories (Public: Danh sách, Chi tiết theo slug)\n- 04. Brands (Public: Danh sách, Chi tiết theo slug)\n- 05. Banners (Public: Slider trang chủ)\n- 06. Admin - Products (Thêm mới kèm sizes/images, Sửa, Thùng rác, Khôi phục, Xóa vĩnh viễn)\n- 07. Admin - Categories (Thêm, Sửa, Xóa mềm, Xóa vĩnh viễn)\n- 08. Admin - Brands (Thêm, Sửa, Xóa mềm, Xóa vĩnh viễn)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product_slug",
+      "value": "vay-da-hoi-kim-tuyen-sang-trong",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "category_slug",
+      "value": "vay-da-hoi",
+      "type": "string"
+    },
+    {
+      "key": "category_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "brand_slug",
+      "value": "elise",
+      "type": "string"
+    },
+    {
+      "key": "brand_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. Authentication & User",
+      "item": [
+        {
+          "name": "Đăng nhập (Login - Lấy Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "        console.log(\"Saved token:\", jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Đăng nhập lấy Bearer Token. Script tự động lưu token vào biến collection `{{token}}`."
+          }
+        },
+        {
+          "name": "Lấy thông tin User hiện tại (Profile)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user"
+              ]
+            },
+            "description": "Lấy thông tin user đăng nhập qua middleware auth:sanctum."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Products (Public)",
+      "item": [
+        {
+          "name": "Danh sách sản phẩm (Có phân trang)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products?page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Số trang"
+                }
+              ]
+            },
+            "description": "Lấy danh sách các sản phẩm đang active, kèm thông tin category và brand."
+          }
+        },
+        {
+          "name": "Chi tiết sản phẩm theo Slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_slug}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_slug}}"
+              ]
+            },
+            "description": "Lấy chi tiết sản phẩm theo slug (kèm category, brand, images, sizes)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Categories (Public)",
+      "item": [
+        {
+          "name": "Danh sách danh mục (Active)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories?page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Lấy danh sách danh mục đang active, sắp xếp theo parent_id và tên."
+          }
+        },
+        {
+          "name": "Chi tiết danh mục theo Slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_slug}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories",
+                "{{category_slug}}"
+              ]
+            },
+            "description": "Xem chi tiết một danh mục theo slug."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Brands (Public)",
+      "item": [
+        {
+          "name": "Danh sách thương hiệu (Active)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/brands?page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "brands"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Lấy danh sách thương hiệu đang active."
+          }
+        },
+        {
+          "name": "Chi tiết thương hiệu theo Slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/brands/{{brand_slug}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "brands",
+                "{{brand_slug}}"
+              ]
+            },
+            "description": "Xem chi tiết một thương hiệu theo slug."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Banners (Public)",
+      "item": [
+        {
+          "name": "Danh sách Banner Slider trang chủ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/banners",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "banners"
+              ]
+            },
+            "description": "Lấy danh sách banner slider trang chủ (active)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Admin - Products",
+      "item": [
+        {
+          "name": "Thêm mới sản phẩm (Kèm Sizes & Images)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set(\"product_id\", jsonData.data.id);",
+                  "    }",
+                  "    if (jsonData.data && jsonData.data.slug) {",
+                  "        pm.collectionVariables.set(\"product_slug\", jsonData.data.slug);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"brand_id\": 1,\n  \"name\": \"\\u0110\\u1ea7m D\\u1ea1 H\\u1ed9i Kim Tuy\\u1ebfn Cao C\\u1ea5p\",\n  \"thumbnail\": \"https://images.unsplash.com/photo-1566174053879-31528523f8ae\",\n  \"short_description\": \"\\u0110\\u1ea7m d\\u1ea1 h\\u1ed9i \\u0111u\\u00f4i c\\u00e1 kim tuy\\u1ebfn l\\u1ea5p l\\u00e1nh sang tr\\u1ecdng.\",\n  \"description\": \"Ch\\u1ea5t li\\u1ec7u cao c\\u1ea5p \\u0111\\u00ednh kim sa th\\u1ee7 c\\u00f4ng, t\\u00f4n d\\u00e1ng th\\u1eaft eo, ph\\u00f9 h\\u1ee3p cho d\\u1ea1 ti\\u1ec7c sang tr\\u1ecdng.\",\n  \"rental_price_per_day\": 300000,\n  \"deposit_rate_percent\": 70,\n  \"original_value\": 3500000,\n  \"is_featured\": true,\n  \"status\": \"active\",\n  \"sizes\": [\n    {\n      \"size\": \"S\",\n      \"stock_quantity\": 3\n    },\n    {\n      \"size\": \"M\",\n      \"stock_quantity\": 5\n    },\n    {\n      \"size\": \"L\",\n      \"stock_quantity\": 2\n    }\n  ],\n  \"images\": [\n    {\n      \"image_url\": \"https://images.unsplash.com/photo-1566174053879-31528523f8ae\",\n      \"sort_order\": 0\n    },\n    {\n      \"image_url\": \"https://images.unsplash.com/photo-1539109136881-3be0616acf4b\",\n      \"sort_order\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            },
+            "description": "Tạo mới sản phẩm kèm theo danh sách kích thước (sizes) và danh sách ảnh (images) trong cùng 1 Transaction."
+          }
+        },
+        {
+          "name": "Cập nhật sản phẩm (PUT/PATCH)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\\u0110\\u1ea7m D\\u1ea1 H\\u1ed9i Kim Tuy\\u1ebfn Cao C\\u1ea5p (C\\u1eadp nh\\u1eadt)\",\n  \"rental_price_per_day\": 350000,\n  \"deposit_rate_percent\": 70,\n  \"original_value\": 4000000,\n  \"status\": \"active\",\n  \"sizes\": [\n    {\n      \"size\": \"S\",\n      \"stock_quantity\": 4\n    },\n    {\n      \"size\": \"M\",\n      \"stock_quantity\": 6\n    },\n    {\n      \"size\": \"XL\",\n      \"stock_quantity\": 1\n    }\n  ],\n  \"images\": [\n    {\n      \"image_url\": \"https://images.unsplash.com/photo-1566174053879-31528523f8ae\",\n      \"sort_order\": 0\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Cập nhật sản phẩm, đồng thời upsert lại sizes và sync lại images."
+          }
+        },
+        {
+          "name": "Xóa mềm sản phẩm (Vào thùng rác)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "{{product_id}}"
+              ]
+            },
+            "description": "Chuyển sản phẩm vào thùng rác (Soft Delete)."
+          }
+        },
+        {
+          "name": "Danh sách sản phẩm trong thùng rác",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/products/trash?page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "trash"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Xem danh sách các sản phẩm đã bị xóa tạm thời."
+          }
+        },
+        {
+          "name": "Khôi phục sản phẩm từ thùng rác",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/products/{{product_id}}/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "{{product_id}}",
+                "restore"
+              ]
+            },
+            "description": "Phục hồi sản phẩm đã bị xóa mềm."
+          }
+        },
+        {
+          "name": "Xóa vĩnh viễn sản phẩm (Force Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/products/{{product_id}}/force",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products",
+                "{{product_id}}",
+                "force"
+              ]
+            },
+            "description": "Xóa vĩnh viễn sản phẩm và toàn bộ sizes, images liên quan khỏi CSDL."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Admin - Categories",
+      "item": [
+        {
+          "name": "Thêm danh mục mới",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set(\"category_id\", jsonData.data.id);",
+                  "    }",
+                  "    if (jsonData.data && jsonData.data.slug) {",
+                  "        pm.collectionVariables.set(\"category_slug\", jsonData.data.slug);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"V\\u00e1y C\\u01b0\\u1edbi & D\\u1ea1 H\\u1ed9i\",\n  \"parent_id\": null,\n  \"image\": \"https://example.com/cat-wedding.jpg\",\n  \"description\": \"B\\u1ed9 s\\u01b0u t\\u1eadp v\\u00e1y c\\u01b0\\u1edbi v\\u00e0 \\u0111\\u1ea7m d\\u1ea1 ti\\u1ec7c cao c\\u1ea5p.\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "Admin tạo mới danh mục trang phục."
+          }
+        },
+        {
+          "name": "Cập nhật danh mục",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"V\\u00e1y C\\u01b0\\u1edbi & D\\u1ea1 H\\u1ed9i (C\\u1eadp nh\\u1eadt)\",\n  \"description\": \"C\\u1eadp nh\\u1eadt th\\u00f4ng tin m\\u00f4 t\\u1ea3 danh m\\u1ee5c\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/categories/{{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "{{category_id}}"
+              ]
+            },
+            "description": "Cập nhật tên, ảnh, mô tả hoặc trạng thái của danh mục."
+          }
+        },
+        {
+          "name": "Xóa mềm danh mục",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/categories/{{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "{{category_id}}"
+              ]
+            },
+            "description": "Xóa mềm danh mục (kiểm tra không còn danh mục con và sản phẩm)."
+          }
+        },
+        {
+          "name": "Xóa vĩnh viễn danh mục (Force Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/categories/{{category_id}}/force",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "{{category_id}}",
+                "force"
+              ]
+            },
+            "description": "Xóa vĩnh viễn danh mục khỏi database."
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Admin - Brands",
+      "item": [
+        {
+          "name": "Thêm thương hiệu mới",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set(\"brand_id\", jsonData.data.id);",
+                  "    }",
+                  "    if (jsonData.data && jsonData.data.slug) {",
+                  "        pm.collectionVariables.set(\"brand_slug\", jsonData.data.slug);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elise Fashion\",\n  \"logo\": \"https://example.com/logos/elise.png\",\n  \"description\": \"Th\\u01b0\\u01a1ng hi\\u1ec7u th\\u1eddi trang d\\u1ea1 ti\\u1ec7c v\\u00e0 c\\u00f4ng s\\u1edf cao c\\u1ea5p.\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/brands",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "brands"
+              ]
+            },
+            "description": "Admin tạo mới thương hiệu/nhà thiết kế."
+          }
+        },
+        {
+          "name": "Cập nhật thương hiệu",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elise Fashion (C\\u1eadp nh\\u1eadt)\",\n  \"description\": \"Th\\u01b0\\u01a1ng hi\\u1ec7u thi\\u1ebft k\\u1ebf \\u0111\\u1ea7m ti\\u1ec7c cao c\\u1ea5p.\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/brands/{{brand_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "brands",
+                "{{brand_id}}"
+              ]
+            },
+            "description": "Cập nhật thương hiệu."
+          }
+        },
+        {
+          "name": "Xóa mềm thương hiệu",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/brands/{{brand_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "brands",
+                "{{brand_id}}"
+              ]
+            },
+            "description": "Chuyển thương hiệu vào thùng rác."
+          }
+        },
+        {
+          "name": "Xóa vĩnh viễn thương hiệu (Force Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/brands/{{brand_id}}/force",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "brands",
+                "{{brand_id}}",
+                "force"
+              ]
+            },
+            "description": "Xóa vĩnh viễn thương hiệu khỏi database."
+          }
+        }
+      ]
+    }
+  ]
+}
