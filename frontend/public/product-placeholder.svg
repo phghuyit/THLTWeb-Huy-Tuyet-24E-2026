@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <rect width="400" height="500" fill="#f5f5f4"/>
+  <rect x="130" y="170" width="140" height="110" rx="8" fill="none" stroke="#a8a29e" stroke-width="3"/>
+  <circle cx="170" cy="205" r="12" fill="#a8a29e"/>
+  <path d="m135 270 45-45 30 30 25-25 30 40" fill="none" stroke="#a8a29e" stroke-width="3"/>
+  <text x="200" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#78716c">H &amp; T Shop</text>
+</svg>

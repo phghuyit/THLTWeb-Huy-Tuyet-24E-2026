@@ -1,0 +1,31 @@
+.admin-login {
+  --color-canvas: #f7f7f5;
+  --color-beige: #f1ece6;
+}
+
+.admin-login .field {
+  min-height: 34px;
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.admin-login .field-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  margin-bottom: 0.3rem;
+}
+
+.admin-login .btn {
+  min-height: 40px;
+  height: 40px;
+  padding: 0 1.1rem;
+  border-radius: 6px;
+  font-size: 13.5px;
+  letter-spacing: normal;
+  text-transform: none;
+}
