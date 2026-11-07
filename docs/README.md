@@ -91,8 +91,8 @@ DB_PASSWORD=            # XAMPP mặc định để TRỐNG (nếu ghi "root" s�
 MAIL_MAILER=log         # hoặc smtp nếu muốn gửi mail thật
 
 # VNPay Sandbox – xem mục 4
-VNP_TMN_CODE=
-VNP_HASH_SECRET=
+VNP_TMN_CODE=PC8LFXZO
+VNP_HASH_SECRET=YBNUBRMRKEDQNOTANPXKYKLGNAPULZJD
 VNP_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
 VNP_RETURN_URL=http://localhost:3000/checkout/result
 ```
@@ -188,14 +188,16 @@ Dự án tích hợp cổng **VNPay ở chế độ Sandbox** – mọi giao d�
 
 ### 4.1. Cấu hình
 
-Điền trong `backend/.env` (lấy từ tài khoản merchant test tại https://sandbox.vnpayment.vn/devreg/):
+Điền trong `backend/.env` (tài khoản merchant **test** của nhóm, đăng ký tại https://sandbox.vnpayment.vn/devreg/):
 
-| Biến | Giá trị |
-|---|---|
-| `VNP_TMN_CODE` | _(điền mã website/Terminal ID)_ |
-| `VNP_HASH_SECRET` | _(điền chuỗi bí mật – không đưa lên GitHub)_ |
-| `VNP_URL` | `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html` |
-| `VNP_RETURN_URL` | `http://localhost:3000/checkout/result` |
+| Thông tin | Biến trong `.env` | Giá trị |
+|---|---|---|
+| Terminal ID / Mã Website | `VNP_TMN_CODE` | `PC8LFXZO` |
+| Secret Key / Chuỗi bí mật tạo checksum | `VNP_HASH_SECRET` | `YBNUBRMRKEDQNOTANPXKYKLGNAPULZJD` |
+| URL thanh toán | `VNP_URL` | `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html` |
+| URL trả về | `VNP_RETURN_URL` | `http://localhost:3000/checkout/result` |
+
+> Đây là khoá của môi trường **Sandbox** (chỉ dùng để test, không phát sinh giao dịch thật). Sau khi sửa `.env` nhớ chạy `php artisan config:clear`.
 
 ### 4.2. Thẻ ngân hàng test
 
